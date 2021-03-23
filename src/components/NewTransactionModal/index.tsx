@@ -1,10 +1,10 @@
-import { FormEvent, useState, useContext } from 'react'
+import { FormEvent, useState } from 'react'
 import Modal from 'react-modal'
-import { TransactionsContext } from '../../TransactionContext'
+import { useTransactions } from '../../hooks/useTransactions'
 
-import incomeImg from '../../assets/income.svg'
 import outcomeImg from '../../assets/outcome.svg'
-import CloseImg from '../../assets/close.svg'
+import incomeImg from '../../assets/income.svg'
+import closeImg from '../../assets/close.svg'
 
 import { Container, TransactionTypeContainer, RadioBox } from './styles'
 
@@ -17,7 +17,8 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
-  const { createTransaction } = useContext(TransactionsContext)
+  const { createTransaction } = useTransactions()
+
   const [title, setTitle] = useState('')
   const [amount, setAmount] = useState(0)
   const [category, setCategory] = useState('')
@@ -32,7 +33,14 @@ export function NewTransactionModal({
       category,
       type,
     })
-    
+
+    //Seta os valores iniciais caso a transação ocorra com sucesso
+    setTitle('')
+    setAmount(0)
+    setCategory('')
+    setType('desposit')
+
+    //Fecha o Modal caso a transação ocorra com sucesso.
     onRequestClose()
   }
 
@@ -48,13 +56,12 @@ export function NewTransactionModal({
         onClick={onRequestClose}
         className="react-modal-close"
       >
-        <img src={CloseImg} alt="Fechar Modal" />
+        <img src={closeImg} alt="Fechar modal" />
       </button>
-
       <Container onSubmit={handleCreateNewTransaction}>
         <h2>Cadastrar Transação</h2>
         <input
-          placeholder="Titulo"
+          placeholder="Título"
           value={title}
           onChange={event => setTitle(event.target.value)}
         />
@@ -77,7 +84,6 @@ export function NewTransactionModal({
             <img src={incomeImg} alt="Entrada" />
             <span>Entrada</span>
           </RadioBox>
-
           <RadioBox
             type="button"
             onClick={() => {
@@ -86,8 +92,8 @@ export function NewTransactionModal({
             isActive={type === 'withdraw'}
             activeColor="red"
           >
-            <img src={outcomeImg} alt="Saida" />
-            <span>Saida</span>
+            <img src={outcomeImg} alt="Saída" />
+            <span>Saída</span>
           </RadioBox>
         </TransactionTypeContainer>
 
